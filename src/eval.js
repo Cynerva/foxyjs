@@ -3,7 +3,7 @@ var specialForms = {};
 var rootEnv = {};
 
 function evalSym(env, sym) {
-  return isNaN(sym) ? rootEnv[sym] : +sym;
+  return isNaN(sym) ? env[sym] : +sym;
 }
 
 function evalSpecialForm(env, list) {
@@ -29,10 +29,23 @@ function evalRoot(tree) {
   return eval(rootEnv, tree);
 }
 
-specialForms["def"] = function(env, args) {
+specialForms.def = function(env, args) {
   var name = args[0];
   var value = eval(env, args[1]);
   rootEnv[name] = value;
+};
+
+specialForms.fn = function(parentEnv, formArgs) {
+  return function() {
+    var argsPassedIn = [].slice.call(arguments);
+    var env = Object.create(parentEnv);
+
+    formArgs[0].forEach(function(sym, i) {
+      env[sym] = argsPassedIn[i];
+    });
+
+    return eval(env, formArgs[1]);
+  };
 };
 
 // Math functions
