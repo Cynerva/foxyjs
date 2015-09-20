@@ -56,7 +56,15 @@ specialForms.eval = function(env, args) {
   return eval(env, eval(env, args[0]));
 };
 
-// Math functions
+specialForms.if = function(env, args) {
+  return eval(env, args[0]) ? eval(env, args[1]) : eval(env, args[2]);
+};
+
+rootEnv.true = true;
+rootEnv.false = false;
+rootEnv.nil = null;
+
+// Math operators
 [
   ["+", function(a, b) { return a + b; }],
   ["-", function(a, b) { return a - b; }],
@@ -68,5 +76,12 @@ specialForms.eval = function(env, args) {
     return args.slice(1).reduce(op[1], args[0]);
   };
 });
+
+// Logic operators
+rootEnv["="] = function(a, b) { return a === b; };
+rootEnv["not="] = function(a, b) { return a !== b; };
+rootEnv["not"] = function(a) { return !a; };
+rootEnv["and"] = function(a, b) { return a && b; };
+rootEnv["or"] = function(a, b) { return a || b; };
 
 module.exports = evalRoot;
