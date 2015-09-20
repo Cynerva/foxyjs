@@ -1,29 +1,51 @@
-var env = {};
+var specialForms = {};
 
+var rootEnv = {};
+
+function evalSym(env, sym) {
+  return isNaN(sym) ? rootEnv[sym] : +sym;
+}
+
+function evalSpecialForm(env, list) {
+  return specialForms[list[0]](env, list.slice(1));
+}
+
+function evalList(env, list) {
+  if (specialForms[list[0]] !== undefined) {
+    return evalSpecialForm(env, list);
+  }
+
+  list = list.map(function(tree) { return eval(env, tree); });
+  var first = list[0];
+  var rest = list.slice(1);
+  return first.apply(this, rest);
+}
+
+function eval(env, tree) {
+  return Array.isArray(tree) ? evalList(env, tree) : evalSym(env, tree);
+}
+
+function evalRoot(tree) {
+  return eval(rootEnv, tree);
+}
+
+specialForms["def"] = function(env, args) {
+  var name = args[0];
+  var value = eval(env, args[1]);
+  rootEnv[name] = value;
+};
+
+// Math functions
 [
   ["+", function(a, b) { return a + b; }],
   ["-", function(a, b) { return a - b; }],
   ["*", function(a, b) { return a * b; }],
   ["/", function(a, b) { return a / b; }]
 ].forEach(function(op) {
-  env[op[0]] = function(args) {
+  rootEnv[op[0]] = function() {
+    var args = [].slice.call(arguments);
     return args.slice(1).reduce(op[1], args[0]);
   };
 });
 
-function evalSym(sym) {
-  return isNaN(sym) ? sym : +sym;
-}
-
-function evalList(list) {
-  var first = list[0];
-  var rest = list.slice(1);
-
-  return env[first](rest.map(eval));
-}
-
-function eval(tree) {
-  return Array.isArray(tree) ? evalList(tree) : evalSym(tree);
-}
-
-module.exports = eval;
+module.exports = evalRoot;
