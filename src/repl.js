@@ -8,18 +8,20 @@ function repl() {
   var rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout,
-    terminal: false
+    terminal: true
   });
+
+  rl.setPrompt(prefix);
 
   rl.on("line", function(line) {
     var tree = read(line);
     var result = eval(tree);
     console.log(result);
-    process.stdout.write(prefix);
+    rl.prompt();
   });
 
   console.log("foxyjs");
-  process.stdout.write(prefix);
+  rl.prompt();
 }
 
 module.exports = repl;

@@ -1,22 +1,14 @@
-var primitives = {};
+var env = {};
 
-var operators = [
+[
   ["+", function(a, b) { return a + b; }],
   ["-", function(a, b) { return a - b; }],
   ["*", function(a, b) { return a * b; }],
   ["/", function(a, b) { return a / b; }]
-];
-
-operators.forEach(function(operator) {
-  var sym = operator[0];
-  var f = operator[1];
-
-  primitives[sym] = function(args) {
-    args = args.map(eval);
-    var first = args[0];
-    var rest = args.slice(1);
-    return rest.reduce(f, first);
-  }
+].forEach(function(op) {
+  env[op[0]] = function(args) {
+    return args.slice(1).reduce(op[1], args[0]);
+  };
 });
 
 function evalSym(sym) {
@@ -27,9 +19,7 @@ function evalList(list) {
   var first = list[0];
   var rest = list.slice(1);
 
-  if (primitives.hasOwnProperty(first)) {
-    return primitives[first](rest);
-  }
+  return env[first](rest.map(eval));
 }
 
 function eval(tree) {
