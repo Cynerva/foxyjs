@@ -1,5 +1,6 @@
 var readline = require("readline");
 var read = require("./read");
+var eval = require("./eval");
 
 var prefix = "=> ";
 
@@ -12,7 +13,8 @@ function repl() {
 
   rl.on("line", function(line) {
     var tree = read(line);
-    console.log(tree);
+    var result = eval(tree);
+    console.log(result);
     process.stdout.write(prefix);
   });
 
