@@ -29,6 +29,10 @@ function evalRoot(tree) {
   return eval(rootEnv, tree);
 }
 
+specialForms.quote = function(env, args) {
+  return args[0];
+};
+
 specialForms.def = function(env, args) {
   var name = args[0];
   var value = eval(env, args[1]);
@@ -46,6 +50,10 @@ specialForms.fn = function(parentEnv, formArgs) {
 
     return eval(env, formArgs[1]);
   };
+};
+
+specialForms.eval = function(env, args) {
+  return eval(env, eval(env, args[0]));
 };
 
 // Math functions
