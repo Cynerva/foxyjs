@@ -15,8 +15,13 @@ function repl() {
   });
 
   reader.onExpression(function(expr) {
-    var result = eval(expr);
-    console.log(result);
+    try {
+      var result = eval(expr);
+      console.log(result);
+    } catch (e) {
+      console.log(e);
+    }
+
     rl.prompt();
   });
 
