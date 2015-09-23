@@ -14,18 +14,17 @@ function repl() {
     terminal: true
   });
 
-  reader.onExpression(function(expr) {
-    try {
-      var result = eval(expr);
-      console.log(result);
-    } catch (e) {
-      console.log(e);
+  rl.on("line", function(line) {
+    var readStatus = reader.read(line);
+
+    readStatus.results.forEach(function(result) {
+      console.log(eval(result));
+    });
+
+    if (readStatus.finished) {
+      rl.prompt();
     }
-
-    rl.prompt();
   });
-
-  rl.on("line", reader.read.bind(reader));
 
   rl.setPrompt(prefix);
   console.log("foxyjs");
