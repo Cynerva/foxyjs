@@ -18,7 +18,11 @@ function repl() {
     var readStatus = reader.read(line);
 
     readStatus.results.forEach(function(result) {
-      console.log(eval(result));
+      try {
+        console.log(eval(result));
+      } catch (e) {
+        console.log(e);
+      }
     });
 
     if (readStatus.finished) {
