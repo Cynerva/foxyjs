@@ -1,5 +1,4 @@
 var specialForms = {};
-
 var rootEnv = {};
 
 function evalSym(env, sym) {

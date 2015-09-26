@@ -1,12 +1,15 @@
+var co = require("co");
+var mori = require("mori");
 var readline = require("readline");
-
-var Reader = require("./reader");
+var Stream = require("./stream");
+var read = require("./read");
 var eval = require("./eval");
 
 var prefix = "=> ";
 
 function repl() {
-  var reader = new Reader();
+  var lineStream = new Stream();
+  var exprStream = read(lineStream);
 
   var rl = readline.createInterface({
     input: process.stdin,
@@ -14,18 +17,14 @@ function repl() {
     terminal: true
   });
 
-  rl.on("line", function(line) {
-    var readStatus = reader.read(line);
+  rl.on("line", lineStream.put.bind(lineStream));
 
-    readStatus.results.forEach(function(result) {
-      try {
-        console.log(eval(result));
-      } catch (e) {
-        console.log(e);
-      }
-    });
-
-    if (readStatus.finished) {
+  co(function*() {
+    while (true) {
+      var expr = yield exprStream.take();
+      // FIXME: shouldn't have to convert to JS here
+      expr = mori.toJs(expr);
+      console.log(eval(expr));
       rl.prompt();
     }
   });
