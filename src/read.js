@@ -26,6 +26,10 @@ function readExpression(tokenStream) {
       return yield readList(tokenStream);
     }
 
+    if (!isNaN(token)) {
+      return +token;
+    }
+
     return token;
   });
 }

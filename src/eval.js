@@ -1,8 +1,8 @@
 var specialForms = {};
 var rootEnv = {};
 
-function evalSym(env, sym) {
-  return isNaN(sym) ? env[sym] : +sym;
+function evalLeaf(env, leaf) {
+  return (typeof leaf === "string") ? env[leaf] : leaf;
 }
 
 function evalSpecialForm(env, list) {
@@ -21,7 +21,7 @@ function evalList(env, list) {
 }
 
 function eval(env, tree) {
-  return Array.isArray(tree) ? evalList(env, tree) : evalSym(env, tree);
+  return Array.isArray(tree) ? evalList(env, tree) : evalLeaf(env, tree);
 }
 
 function evalRoot(tree) {
