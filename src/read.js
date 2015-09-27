@@ -2,22 +2,28 @@ var co = require("co");
 var mori = require("mori");
 var Stream = require("./stream");
 
+function readList(tokenStream) {
+  return co(function*() {
+    var elements = mori.vector();
+    token = yield tokenStream.peek();
+
+    while (token !== ')') {
+      var element = yield readExpression(tokenStream);
+      elements = mori.conj(elements, element);
+      token = yield tokenStream.peek();
+    }
+
+    tokenStream.take();
+    return elements;
+  });
+}
+
 function readExpression(tokenStream) {
   return co(function*() {
     var token = yield tokenStream.take();
 
     if (token === '(') {
-      var elements = mori.vector();
-      token = yield tokenStream.peek();
-
-      while (token !== ')') {
-        var element = yield readExpression(tokenStream);
-        elements = mori.conj(elements, element);
-        token = yield tokenStream.peek();
-      }
-
-      tokenStream.take();
-      return elements;
+      return yield readList(tokenStream);
     }
 
     return token;
