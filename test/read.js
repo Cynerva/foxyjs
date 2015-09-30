@@ -25,4 +25,11 @@ describe("read", function() {
     var result = yield take(output);
     assert(result === "abc");
   });
+
+  it("can process multiple strings", function*() {
+    yield put(input, "abc");
+    yield take(output);
+    yield put(input, "def");
+    yield take(output);
+  });
 });
