@@ -1,4 +1,5 @@
 {"name": "foxyjs",
  "version": "0.0.0",
- "dependencies": {"mocha": "2.3.3"},
+ "dependencies": {"js-csp": "0.5.0"},
+ "devDependencies": {"mocha": "2.3.3"},
  "scripts": {"test": "mocha"}}
