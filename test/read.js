@@ -20,7 +20,7 @@ describe("read", function() {
     output = read(input);
   });
 
-  it("returns a symbol as a string", function*() {
+  it("reads a symbol as a string", function*() {
     yield put(input, "abc");
     var result = yield take(output);
     assert(result === "abc");
@@ -31,5 +31,11 @@ describe("read", function() {
     yield take(output);
     yield put(input, "def");
     yield take(output);
+  });
+
+  it("reads a number as a number", function*() {
+    yield put(input, "123");
+    var result = yield take(output);
+    assert(result === 123);
   });
 });
