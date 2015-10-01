@@ -48,18 +48,18 @@ function readExpression(tokenChannel) {
   });
 }
 
-function read(input) {
-  var ch = makeChannel();
-  var tokenChannel = makeTokenChannel(input);
+function readChannel(input) {
+  var tokenCh = makeTokenChannel(input);
+  var resultCh = makeChannel();
 
   co(function*() {
     while (true) {
-      var expr = yield readExpression(tokenChannel);
-      yield ch.put(expr);
+      var expr = yield readExpression(tokenCh);
+      yield resultCh.put(expr);
     }
   });
 
-  return ch;
+  return resultCh;
 }
 
-module.exports = read;
+module.exports = {readChannel: readChannel};

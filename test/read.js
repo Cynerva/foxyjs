@@ -9,15 +9,15 @@ var describe = mocha.describe;
 var beforeEach = mocha.beforeEach;
 var it = helper.it;
 
-var read = require("../src/read");
+var readChannel = require("../src/read").readChannel;
 
-describe("read", function() {
+describe("readChannel", function() {
   var input;
   var output;
 
   beforeEach(function() {
     input = makeChannel();
-    output = read(input);
+    output = readChannel(input);
   });
 
   it("reads a symbol as a string", function*() {
