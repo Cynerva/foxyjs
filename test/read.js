@@ -45,4 +45,12 @@ describe("readChannel", function() {
     assert(mori.isList(result));
     assert(mori.isEmpty(result));
   });
+
+  it("reads a list of two symbols", function*() {
+    yield input.put("(a b)");
+    var result = yield output.take();
+    assert(mori.isList(result));
+    assert(mori.first(result) === "a");
+    assert(mori.second(result) === "b");
+  });
 });

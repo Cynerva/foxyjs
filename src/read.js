@@ -34,14 +34,16 @@ function readExpression(tokenChannel) {
     var token = yield tokenChannel.take();
 
     if (token === "(") {
-      var list = mori.list();
-      token = yield tokenChannel.take();
+      var elements = [];
+      token = yield tokenChannel.peek();
 
       while (token !== ")") {
-        token = yield tokenChannel.take();
+        var expr = yield readExpression(tokenChannel);
+        elements.push(expr);
+        token = yield tokenChannel.peek();
       }
 
-      return list;
+      return mori.list.apply(null, elements);
     }
 
     return readAtom(token);
