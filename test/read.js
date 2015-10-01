@@ -2,6 +2,7 @@ var assert = require("assert");
 var csp = require("js-csp");
 var helper = require("./helper");
 var mocha = require("mocha");
+var mori = require("mori");
 
 var describe = mocha.describe;
 var beforeEach = mocha.beforeEach;
@@ -37,5 +38,12 @@ describe("read", function() {
     yield put(input, "123");
     var result = yield take(output);
     assert(result === 123);
+  });
+
+  it("reads an empty list", function*() {
+    yield put(input, "()");
+    var result = yield take(output);
+    assert(mori.isList(result));
+    assert(mori.isEmpty(result));
   });
 });
