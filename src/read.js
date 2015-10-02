@@ -20,6 +20,7 @@ function readExpression(tokenChannel) {
         token = yield tokenChannel.peek();
       }
 
+      yield tokenChannel.take();
       return mori.list.apply(null, elements);
     }
 

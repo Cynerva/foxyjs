@@ -68,4 +68,11 @@ describe("readChannel", function() {
     var result = yield output.take();
     assert(mori.equals(result, mori.list("unquote", "a")));
   });
+
+  it("consumes closing parens properly", function*() {
+    yield input.put("() a");
+    output.take();
+    var result = yield output.take();
+    assert(result === "a");
+  });
 });
