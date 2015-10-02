@@ -12,11 +12,7 @@ function makeInterface() {
 
 function makeLineChannelFromInterface(interface) {
   var ch = makeChannel();
-
-  interface.on("line", function(line) {
-    ch.put(line);
-  });
-
+  interface.on("line", ch.put.bind(ch));
   return ch;
 }
 
