@@ -23,12 +23,24 @@ function readExpression(tokenChannel) {
       return mori.list.apply(null, elements);
     }
 
+    if (token === "'") {
+      return mori.list("quote", yield readExpression(tokenChannel));
+    }
+
+    if (token === "`") {
+      return mori.list("backquote", yield readExpression(tokenChannel));
+    }
+
+    if (token === "~") {
+      return mori.list("unquote", yield readExpression(tokenChannel));
+    }
+
     return readAtom(token);
   });
 }
 
 function tokenize(str) {
-  return str.replace(/([\(\)])/g, " $1 ")
+  return str.replace(/([\(\)'`~])/g, " $1 ")
     .trim()
     .split(/\s+/);
 }

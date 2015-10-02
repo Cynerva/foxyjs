@@ -42,15 +42,30 @@ describe("readChannel", function() {
   it("reads an empty list", function*() {
     yield input.put("()");
     var result = yield output.take();
-    assert(mori.isList(result));
-    assert(mori.isEmpty(result));
+    assert(mori.equals(result, mori.list()));
   });
 
   it("reads a list of two symbols", function*() {
     yield input.put("(a b)");
     var result = yield output.take();
-    assert(mori.isList(result));
-    assert(mori.first(result) === "a");
-    assert(mori.second(result) === "b");
+    assert(mori.equals(result, mori.list("a", "b")));
+  });
+
+  it("reads quotes", function*() {
+    yield input.put("'a");
+    var result = yield output.take();
+    assert(mori.equals(result, mori.list("quote", "a")));
+  });
+
+  it("reads backquotes", function*() {
+    yield input.put("`a");
+    var result = yield output.take();
+    assert(mori.equals(result, mori.list("backquote", "a")));
+  });
+
+  it("reads unquotes", function*() {
+    yield input.put("~a");
+    var result = yield output.take();
+    assert(mori.equals(result, mori.list("unquote", "a")));
   });
 });
