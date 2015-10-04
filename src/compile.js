@@ -2,21 +2,16 @@ var mori = require("mori");
 
 var forms = {};
 
-forms["+"] = function(args) {
-  return "(" + mori.toJs(args).join(" + ") + ")";
+function addInfixOp(sym, jsSym) {
+  forms[sym] = function(args) {
+    return "(" + mori.toJs(args).join(" " + jsSym + " ") + ")";
+  }
 }
 
-forms["-"] = function(args) {
-  return "(" + mori.toJs(args).join(" - ") + ")";
-}
-
-forms["*"] = function(args) {
-  return "(" + mori.toJs(args).join(" * ") + ")";
-}
-
-forms["/"] = function(args) {
-  return "(" + mori.toJs(args).join(" / ") + ")";
-}
+addInfixOp("+", "+");
+addInfixOp("-", "-");
+addInfixOp("*", "*");
+addInfixOp("/", "/");
 
 function compileAtom(ast) {
   return ast.toString();
