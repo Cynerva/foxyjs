@@ -2,6 +2,7 @@ var co = require("co");
 var readline = require("readline");
 var makeChannel = require("./channel");
 var makeReadChannel = require("./read").readChannel;
+var eval = require("./eval");
 
 function makeInterface() {
   return readline.createInterface({
@@ -27,7 +28,8 @@ function startRepl() {
   co(function*() {
     while (true) {
       var expr = yield readChannel.take();
-      console.log(expr);
+      var result = eval(expr);
+      console.log(result);
       interface.prompt();
     }
   });
