@@ -95,4 +95,9 @@ forms.def = function(scope, args) {
   return '_foxy.define("' + sym + '", ' + value + ');';
 }
 
+forms.ns = function(scope, args) {
+  var name = mori.first(args);
+  return '_foxy.setNamespace("' + name + '");';
+}
+
 module.exports = compileRoot;

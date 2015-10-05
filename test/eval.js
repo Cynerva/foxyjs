@@ -23,4 +23,14 @@ describe("eval", function() {
     var result = eval("a");
     assert(result === 1);
   });
+
+  it("can def symbols in different namespaces", function() {
+    eval(list("ns", "foo"));
+    eval(list("def", "a", 1));
+    eval(list("ns", "bar"));
+    eval(list("def", "a", 2));
+    assert(eval("a") === 2);
+    eval(list("ns", "foo"));
+    assert(eval("a") === 1);
+  });
 });

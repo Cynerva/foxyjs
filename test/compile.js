@@ -89,4 +89,10 @@ describe("compile", function() {
     var expected = '_foxy.define("a", 1);';
     assert(compile(ast) === expected);
   });
+
+  it("compiles ns", function() {
+    var ast = list("ns", "foo");
+    var expected = '_foxy.setNamespace("foo");';
+    assert(compile(ast) === expected);
+  });
 });
