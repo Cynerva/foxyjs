@@ -2,28 +2,42 @@ var mori = require("mori");
 
 var forms = {};
 
-function compileAtom(ast) {
-  return ast.toString();
+function compileAtom(scope, ast) {
+  if (typeof ast === "string") {
+    return scope[ast] === undefined ?
+      '_foxy_env["' + ast + '"]' :
+      ast;
+  } else {
+    return ast.toString();
+  }
 }
 
-function compileList(ast) {
+function compileList(scope, ast) {
   var first = mori.first(ast);
   var args = mori.rest(ast);
 
   if (forms[first] !== undefined) {
-    return forms[first](args);
+    return forms[first](scope, args);
   } else {
-    args = mori.map(compile, args);
-    return compile(first) + "(" + join(args, ", ") + ")";
+    args = compileArgs(scope, args);
+    return compile(scope, first) + "(" + join(args, ", ") + ")";
   }
 }
 
-function compile(ast) {
+function compile(scope, ast) {
   if (mori.isList(ast)) {
-    return compileList(ast);
+    return compileList(scope, ast);
   } else {
-    return compileAtom(ast);
+    return compileAtom(scope, ast);
   }
+}
+
+function compileArgs(scope, args) {
+  return mori.map(function(ast) { return compile(scope, ast); }, args);
+}
+
+function compileRoot(ast) {
+  return compile({}, ast);
 }
 
 function join(collection, delimiter) {
@@ -31,8 +45,8 @@ function join(collection, delimiter) {
 }
 
 function addInfixOp(sym, jsSym) {
-  forms[sym] = function(args) {
-    return "(" + join(mori.map(compile, args), " " + jsSym + " ") + ")";
+  forms[sym] = function(scope, args) {
+    return "(" + join(compileArgs(scope, args), " " + jsSym + " ") + ")";
   }
 }
 
@@ -41,15 +55,20 @@ addInfixOp("-", "-");
 addInfixOp("*", "*");
 addInfixOp("/", "/");
 
-forms.fn = function(args) {
+forms.fn = function(scope, args) {
   var fnArgs = mori.first(args);
   var body = mori.second(args);
+  var scope = Object.create(scope);
+
+  mori.each(fnArgs, function(arg) {
+    scope[arg] = true;
+  });
 
   return (
     "(function(" +
     join(fnArgs, ", ") +
     ") { return " +
-    compile(body) +
+    compile(scope, body) +
     "; })"
   );
 }
@@ -65,15 +84,15 @@ function quoteExpr(expr) {
   }
 }
 
-forms.quote = function(args) {
+forms.quote = function(scope, args) {
   var expr = mori.first(args);
   return quoteExpr(expr);
 }
 
-forms.def = function(args) {
+forms.def = function(scope, args) {
   var sym = mori.first(args);
-  var value = compile(mori.second(args));
+  var value = compile(scope, mori.second(args));
   return "_foxy_env[\"" + sym + "\"] = " + value + ";";
 }
 
-module.exports = compile;
+module.exports = compileRoot;
