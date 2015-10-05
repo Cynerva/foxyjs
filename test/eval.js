@@ -17,4 +17,10 @@ describe("eval", function() {
     var result = eval(ast);
     assert(mori.equals(result, list()));
   });
+
+  it("can def then dereference a symbol", function() {
+    eval(list("def", "a", 1));
+    var result = eval("a");
+    assert(result === 1);
+  });
 });

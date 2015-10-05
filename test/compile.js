@@ -83,4 +83,10 @@ describe("compile", function() {
     var expected = 'mori.list("a", mori.list("b", "c"))';
     assert(compile(ast) === expected);
   });
+
+  it("compiles def", function() {
+    var ast = list("def", "a", 1);
+    var expected = '_foxy_env["a"] = 1;'
+    assert(compile(ast) === expected);
+  });
 });

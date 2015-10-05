@@ -70,4 +70,10 @@ forms.quote = function(args) {
   return quoteExpr(expr);
 }
 
+forms.def = function(args) {
+  var sym = mori.first(args);
+  var value = compile(mori.second(args));
+  return "_foxy_env[\"" + sym + "\"] = " + value + ";";
+}
+
 module.exports = compile;
