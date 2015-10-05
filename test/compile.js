@@ -59,4 +59,10 @@ describe("compile", function() {
     var expected = "(function(a, b) { return (a + b); })";
     assert(compile(ast) === expected);
   });
+
+  it("compiles anonymous fn calls", function() {
+    var ast = list(list("fn", list("a"), "a"), 0);
+    var expected = "(function(a) { return a; })(0)";
+    assert(compile(ast) === expected);
+  });
 });

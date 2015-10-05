@@ -34,9 +34,15 @@ function compileAtom(ast) {
 }
 
 function compileList(ast) {
-  var sym = mori.first(ast);
+  var first = mori.first(ast);
   var args = mori.rest(ast);
-  return forms[sym](args);
+
+  if (forms[first] !== undefined) {
+    return forms[first](args);
+  } else {
+    args = mori.map(compile, args);
+    return compile(first) + "(" + join(args, ", ") + ")";
+  }
 }
 
 function compile(ast) {
