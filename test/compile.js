@@ -47,4 +47,16 @@ describe("compile", function() {
     var expected = "(1 + (2 - 3))";
     assert(compile(ast) === expected);
   });
+
+  it("compiles fn with no args", function() {
+    var ast = list("fn", list(), "a");
+    var expected = "(function() { return a; })";
+    assert(compile(ast) === expected);
+  });
+
+  it("compiles fn with two args", function() {
+    var ast = list("fn", list("a", "b"), list("+", "a", "b"));
+    var expected = "(function(a, b) { return (a + b); })";
+    assert(compile(ast) === expected);
+  });
 });

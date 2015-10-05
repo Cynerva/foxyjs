@@ -4,7 +4,7 @@ var forms = {};
 
 function addInfixOp(sym, jsSym) {
   forms[sym] = function(args) {
-    return "(" + mori.toJs(args).join(" " + jsSym + " ") + ")";
+    return "(" + mori.toJs(mori.map(compile, args)).join(" " + jsSym + " ") + ")";
   }
 }
 
@@ -13,12 +13,23 @@ addInfixOp("-", "-");
 addInfixOp("*", "*");
 addInfixOp("/", "/");
 
+forms.fn = function(args) {
+  var fnArgs = mori.first(args);
+  var body = mori.second(args);
+  return (
+    "(function(" +
+    mori.toJs(fnArgs).join(", ") +
+    ") { return " +
+    compile(body) +
+    "; })"
+  );
+}
+
 function compileAtom(ast) {
   return ast.toString();
 }
 
 function compileList(ast) {
-  ast = mori.map(compile, ast);
   var sym = mori.first(ast);
   var args = mori.rest(ast);
   return forms[sym](args);
