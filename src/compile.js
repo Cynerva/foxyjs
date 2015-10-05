@@ -20,6 +20,7 @@ addInfixOp("/", "/");
 forms.fn = function(args) {
   var fnArgs = mori.first(args);
   var body = mori.second(args);
+
   return (
     "(function(" +
     join(fnArgs, ", ") +
@@ -27,6 +28,22 @@ forms.fn = function(args) {
     compile(body) +
     "; })"
   );
+}
+
+function quoteExpr(expr) {
+  if (typeof expr === "string") {
+    return '"' + expr + '"';
+  } else if (typeof expr === "number") {
+    return expr;
+  } else if (mori.isList(expr)) {
+    var childArgs = mori.map(quoteExpr, expr);
+    return "mori.list(" + join(childArgs, ", ") + ")";
+  }
+}
+
+forms.quote = function(args) {
+  var expr = mori.first(args);
+  return quoteExpr(expr);
 }
 
 function compileAtom(ast) {

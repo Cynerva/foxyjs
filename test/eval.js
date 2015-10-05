@@ -11,4 +11,10 @@ describe("eval", function() {
     var expected = 7;
     assert(eval(ast) === expected);
   });
+
+  it("evaluates code that returns a list", function() {
+    var ast = list("quote", list());
+    var result = eval(ast);
+    assert(mori.equals(result, list()));
+  });
 });

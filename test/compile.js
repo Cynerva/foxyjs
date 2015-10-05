@@ -65,4 +65,22 @@ describe("compile", function() {
     var expected = "(function(a) { return a; })(0)";
     assert(compile(ast) === expected);
   });
+
+  it("compiles quote of a symbol", function() {
+    var ast = list("quote", "a");
+    var expected = "\"a\"";
+    assert(compile(ast) === expected);
+  });
+
+  it("compiles quote of empty list", function() {
+    var ast = list("quote", list());
+    var expected = "mori.list()";
+    assert(compile(ast) === expected);
+  });
+
+  it("compiles quote of nested lists", function() {
+    var ast = list("quote", list("a", list("b", "c")));
+    var expected = 'mori.list("a", mori.list("b", "c"))';
+    assert(compile(ast) === expected);
+  });
 });
