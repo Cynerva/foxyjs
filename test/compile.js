@@ -8,7 +8,7 @@ var compile = require("../src/compile");
 describe("compile", function() {
   it("compiles top-level symbols", function() {
     var ast = "sym";
-    var expected = '_foxy_env["sym"]';
+    var expected = '_foxy.resolve("sym")';
     assert(compile(ast) === expected);
   });
 
@@ -50,7 +50,7 @@ describe("compile", function() {
 
   it("compiles fn with no args", function() {
     var ast = list("fn", list(), "a");
-    var expected = '(function() { return _foxy_env["a"]; })';
+    var expected = '(function() { return _foxy.resolve("a"); })';
     assert(compile(ast) === expected);
   });
 
@@ -86,7 +86,7 @@ describe("compile", function() {
 
   it("compiles def", function() {
     var ast = list("def", "a", 1);
-    var expected = '_foxy_env["a"] = 1;'
+    var expected = '_foxy.define("a", 1);';
     assert(compile(ast) === expected);
   });
 });

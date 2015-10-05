@@ -5,7 +5,7 @@ var forms = {};
 function compileAtom(scope, ast) {
   if (typeof ast === "string") {
     return scope[ast] === undefined ?
-      '_foxy_env["' + ast + '"]' :
+      '_foxy.resolve("' + ast + '")' :
       ast;
   } else {
     return ast.toString();
@@ -92,7 +92,7 @@ forms.quote = function(scope, args) {
 forms.def = function(scope, args) {
   var sym = mori.first(args);
   var value = compile(scope, mori.second(args));
-  return "_foxy_env[\"" + sym + "\"] = " + value + ";";
+  return '_foxy.define("' + sym + '", ' + value + ');';
 }
 
 module.exports = compileRoot;
