@@ -2,9 +2,13 @@ var mori = require("mori");
 
 var forms = {};
 
+function join(collection, delimiter) {
+  return mori.toJs(collection).join(delimiter);
+}
+
 function addInfixOp(sym, jsSym) {
   forms[sym] = function(args) {
-    return "(" + mori.toJs(mori.map(compile, args)).join(" " + jsSym + " ") + ")";
+    return "(" + join(mori.map(compile, args), " " + jsSym + " ") + ")";
   }
 }
 
@@ -18,7 +22,7 @@ forms.fn = function(args) {
   var body = mori.second(args);
   return (
     "(function(" +
-    mori.toJs(fnArgs).join(", ") +
+    join(fnArgs, ", ") +
     ") { return " +
     compile(body) +
     "; })"
