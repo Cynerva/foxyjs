@@ -89,6 +89,24 @@ forms.quote = function(scope, args) {
   return quoteExpr(expr);
 }
 
+function backquoteExpr(scope, expr) {
+  if (mori.isList(expr)) {
+    if (mori.first(expr) === "unquote") {
+      return compile(scope, mori.second(expr));
+    } else {
+      var childArgs = mori.map(backquoteExpr.bind(null, scope), expr);
+      return "mori.list(" + join(childArgs, ", ") + ")";
+    }
+  } else {
+    return quoteExpr(expr);
+  }
+}
+
+forms.backquote = function(scope, args) {
+  var expr = mori.first(args);
+  return backquoteExpr(scope, expr);
+}
+
 forms.def = function(scope, args) {
   var sym = mori.first(args);
   var value = compile(scope, mori.second(args));

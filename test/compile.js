@@ -95,4 +95,22 @@ describe("compile", function() {
     var expected = '_foxy.setNamespace("foo");';
     assert(compile(ast) === expected);
   });
+
+  it("compiles backquote of a symbol", function() {
+    var ast = list("backquote", "a");
+    var expected = '"a"';
+    assert(compile(ast) === expected);
+  });
+
+  it("compiles backquote of empty list", function() {
+    var ast = list("backquote", list());
+    var expected = "mori.list()";
+    assert(compile(ast) === expected);
+  });
+
+  it("compiles backquote with nested unquote", function() {
+    var ast = list("backquote", list("a", list("unquote", "a")));
+    var expected = 'mori.list("a", _foxy.resolve("a"))';
+    assert(compile(ast) === expected);
+  });
 });
