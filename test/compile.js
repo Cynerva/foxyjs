@@ -113,4 +113,10 @@ describe("compile", function() {
     var expected = 'mori.list("a", _foxy.resolve("a"))';
     assert(compile(ast) === expected);
   });
+
+  it("compiles defmacro with two args", function() {
+    var ast = list("defmacro", "foo", list(), 1);
+    var expected = '_foxy.defineMacro("foo", (function() { return 1; }));';
+    assert(compile(ast) === expected);
+  });
 });

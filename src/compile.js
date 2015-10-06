@@ -1,4 +1,5 @@
 var mori = require("mori");
+var runtime = require("./runtime");
 
 var forms = {};
 
@@ -12,12 +13,20 @@ function compileAtom(scope, ast) {
   }
 }
 
+function compileMacro(scope, macro, args) {
+  var ast = macro.apply(null, args);
+  return compile(scope, ast);
+}
+
 function compileList(scope, ast) {
   var first = mori.first(ast);
   var args = mori.rest(ast);
+  var macro = runtime.resolveMacro(first);
 
   if (forms[first] !== undefined) {
     return forms[first](scope, args);
+  } else if (macro !== undefined) {
+    return compileMacro(scope, macro, args);
   } else {
     args = compileArgs(scope, args);
     return compile(scope, first) + "(" + join(args, ", ") + ")";
@@ -25,7 +34,7 @@ function compileList(scope, ast) {
 }
 
 function compile(scope, ast) {
-  if (mori.isList(ast)) {
+  if (mori.isSeq(ast)) {
     return compileList(scope, ast);
   } else {
     return compileAtom(scope, ast);
@@ -78,7 +87,7 @@ function quoteExpr(expr) {
     return '"' + expr + '"';
   } else if (typeof expr === "number") {
     return expr;
-  } else if (mori.isList(expr)) {
+  } else if (mori.isSeq(expr)) {
     var childArgs = mori.map(quoteExpr, expr);
     return "mori.list(" + join(childArgs, ", ") + ")";
   }
@@ -90,7 +99,7 @@ forms.quote = function(scope, args) {
 }
 
 function backquoteExpr(scope, expr) {
-  if (mori.isList(expr)) {
+  if (mori.isSeq(expr)) {
     if (mori.first(expr) === "unquote") {
       return compile(scope, mori.second(expr));
     } else {
@@ -116,6 +125,12 @@ forms.def = function(scope, args) {
 forms.ns = function(scope, args) {
   var name = mori.first(args);
   return '_foxy.setNamespace("' + name + '");';
+}
+
+forms.defmacro = function(scope, args) {
+  var name = mori.first(args);
+  var f = mori.conj(mori.rest(args), "fn");
+  return '_foxy.defineMacro("' + name + '", ' + compile(scope, f) + ');';
 }
 
 module.exports = compileRoot;

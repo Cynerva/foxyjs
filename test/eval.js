@@ -33,4 +33,10 @@ describe("eval", function() {
     eval(list("ns", "foo"));
     assert(eval("a") === 1);
   });
+
+  it("can defmacro then use that macro", function() {
+    eval(list("defmacro", "foo", list(), 1));
+    var result = eval(list("foo"));
+    assert(result === 1);
+  });
 });
