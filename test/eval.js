@@ -39,4 +39,12 @@ describe("eval", function() {
     var result = eval(list("foo"));
     assert(result === 1);
   });
+
+  it("can eval a macro with two args", function() {
+    var args = list("a", "b");
+    var body = list("+", "a", "b");
+    eval(list("defmacro", "foo", args, body));
+    var result = eval(list("foo", 1, 2));
+    assert(result === 3);
+  });
 });

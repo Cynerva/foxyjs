@@ -14,7 +14,7 @@ function compileAtom(scope, ast) {
 }
 
 function compileMacro(scope, macro, args) {
-  var ast = macro.apply(null, args);
+  var ast = macro.apply(null, mori.intoArray(args));
   return compile(scope, ast);
 }
 
