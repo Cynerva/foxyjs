@@ -47,4 +47,10 @@ describe("eval", function() {
     var result = eval(list("foo", 1, 2));
     assert(result === 3);
   });
+
+  it("can eval a macro with backquote", function() {
+    eval(list("defmacro", "foo", list(), list("backquote", list("+", 1, 2))));
+    var result = eval(list("foo"));
+    assert(result === 3);
+  });
 });
