@@ -90,12 +90,6 @@ describe("compile", function() {
     assert(compile(ast) === expected);
   });
 
-  it("compiles ns", function() {
-    var ast = list("ns", "foo");
-    var expected = '_foxy.setNamespace("foo");';
-    assert(compile(ast) === expected);
-  });
-
   it("compiles backquote of a symbol", function() {
     var ast = list("backquote", "a");
     var expected = '"a"';

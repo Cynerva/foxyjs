@@ -24,16 +24,6 @@ describe("eval", function() {
     assert(result === 1);
   });
 
-  it("can def symbols in different namespaces", function() {
-    eval(list("ns", "foo"));
-    eval(list("def", "a", 1));
-    eval(list("ns", "bar"));
-    eval(list("def", "a", 2));
-    assert(eval("a") === 2);
-    eval(list("ns", "foo"));
-    assert(eval("a") === 1);
-  });
-
   it("can defmacro then use that macro", function() {
     eval(list("defmacro", "foo", list(), 1));
     var result = eval(list("foo"));

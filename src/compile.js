@@ -122,11 +122,6 @@ forms.def = function(scope, args) {
   return '_foxy.define("' + sym + '", ' + value + ');';
 }
 
-forms.ns = function(scope, args) {
-  var name = mori.first(args);
-  return '_foxy.setNamespace("' + name + '");';
-}
-
 forms.defmacro = function(scope, args) {
   var name = mori.first(args);
   var f = mori.conj(mori.rest(args), "fn");
