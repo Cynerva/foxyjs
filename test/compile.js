@@ -107,18 +107,4 @@ describe("compile", function() {
     var expected = 'mori.list("a", _foxy.resolve("a"))';
     assert(compile(ast) === expected);
   });
-
-  it("compiles defmacro with no args", function() {
-    var ast = list("defmacro", "foo", list(), 1);
-    var expected = '_foxy.defineMacro("foo", (function() { return 1; }));';
-    assert(compile(ast) === expected);
-  });
-
-  it("compiles defmacro with two args", function() {
-    var args = list("a", "b");
-    var body = list("+", "a", "b");
-    var ast = list("defmacro", "foo", args, body);
-    var expected = '_foxy.defineMacro("foo", (function(a, b) { return (a + b); }));';
-    assert(compile(ast) === expected);
-  });
 });

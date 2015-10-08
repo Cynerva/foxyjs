@@ -2,6 +2,7 @@ var mori = require("mori");
 var runtime = require("./runtime");
 
 var forms = {};
+var macros = {};
 
 function compileAtom(scope, ast) {
   if (typeof ast === "string") {
@@ -21,7 +22,7 @@ function compileMacro(scope, macro, args) {
 function compileList(scope, ast) {
   var first = mori.first(ast);
   var args = mori.rest(ast);
-  var macro = runtime.resolveMacro(first);
+  var macro = macros[first];
 
   if (forms[first] !== undefined) {
     return forms[first](scope, args);
@@ -125,7 +126,8 @@ forms.def = function(scope, args) {
 forms.defmacro = function(scope, args) {
   var name = mori.first(args);
   var f = mori.conj(mori.rest(args), "fn");
-  return '_foxy.defineMacro("' + name + '", ' + compile(scope, f) + ');';
+  var _foxy = runtime;
+  macros[name] = eval(compile(scope, f));
 }
 
 module.exports = compileRoot;

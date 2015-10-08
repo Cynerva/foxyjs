@@ -43,4 +43,11 @@ describe("eval", function() {
     var result = eval(list("foo"));
     assert(result === 3);
   });
+
+  it("can eval a macro that refers to another symbol", function() {
+    eval(list("def", "a", 5));
+    eval(list("defmacro", "foo", list(), "a"));
+    var result = eval(list("foo"));
+    assert(result === 5);
+  });
 });
