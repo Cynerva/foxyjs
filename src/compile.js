@@ -64,6 +64,18 @@ addInfixOp("+", "+");
 addInfixOp("-", "-");
 addInfixOp("*", "*");
 addInfixOp("/", "/");
+addInfixOp("=", "===");
+addInfixOp("not=", "!==");
+addInfixOp("<", "<");
+addInfixOp(">", ">");
+addInfixOp("<=", "<=");
+addInfixOp(">=", ">=");
+addInfixOp("and", "&&");
+addInfixOp("or", "||");
+
+forms.not = function(scope, args) {
+  return "(!" + compile(scope, mori.first(args)) + ")";
+}
 
 forms.fn = function(scope, args) {
   var fnArgs = mori.first(args);

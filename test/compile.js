@@ -107,4 +107,58 @@ describe("compile", function() {
     var expected = 'mori.list("a", _foxy.resolve("a"))';
     assert(compile(ast) === expected);
   });
+
+  it("compiles = with 2 args", function() {
+    var ast = list("=", 1, 2);
+    var expected = "(1 === 2)";
+    assert(compile(ast) === expected);
+  });
+
+  it("compiles not= with 2 args", function() {
+    var ast = list("not=", 1, 2);
+    var expected = "(1 !== 2)";
+    assert(compile(ast) === expected);
+  });
+
+  it("compiles < with 2 args", function() {
+    var ast = list("<", 1, 2);
+    var expected = "(1 < 2)";
+    assert(compile(ast) === expected);
+  });
+
+  it("compiles > with 2 args", function() {
+    var ast = list(">", 1, 2);
+    var expected = "(1 > 2)";
+    assert(compile(ast) === expected);
+  });
+
+  it("compiles <= with 2 args", function() {
+    var ast = list("<=", 1, 2);
+    var expected = "(1 <= 2)";
+    assert(compile(ast) === expected);
+  });
+
+  it("compiles >= with 2 args", function() {
+    var ast = list(">=", 1, 2);
+    var expected = "(1 >= 2)";
+    assert(compile(ast) === expected);
+  });
+
+  it("compiles not with 1 arg", function() {
+    var ast = list("not", 1);
+    var expected = "(!1)";
+    assert(compile(ast) === expected);
+  });
+
+  it("compiles and with 2 args", function() {
+    var ast = list("and", 1, 2);
+    var expected = "(1 && 2)";
+    assert(compile(ast) === expected);
+  });
+
+  it("compiles or with 2 args", function() {
+    var ast = list("or", 1, 2);
+    var expected = "(1 || 2)";
+    assert(compile(ast) === expected);
+  });
 });
