@@ -77,4 +77,12 @@ function readChannel(input) {
   return resultCh;
 }
 
-module.exports = {readChannel: readChannel};
+function readString(str) {
+  var input = makeChannel();
+  var output = readChannel(input);
+  input.put(str);
+  return output.take();
+}
+
+module.exports = {readChannel: readChannel,
+                  readString: readString};

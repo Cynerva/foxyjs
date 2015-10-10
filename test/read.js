@@ -1,5 +1,4 @@
 var assert = require("assert");
-var co = require("co");
 var mocha = require("mocha");
 var mori = require("mori");
 var helper = require("./helper");

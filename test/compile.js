@@ -1,164 +1,47 @@
 var assert = require("assert");
-var mori = require("mori");
+var co = require("co");
+var mocha = require("mocha");
+var helper = require("./helper");
+var readString = require("../src/read").readString;
 
-var list = mori.list;
+var describe = mocha.describe;
+var it = helper.it;
 
 var compile = require("../src/compile");
 
 describe("compile", function() {
-  it("compiles top-level symbols", function() {
-    var ast = "sym";
-    var expected = '_foxy.resolve("sym")';
-    assert(compile(ast) === expected);
-  });
+  function itCompiles(str, expected) {
+    it("compiles " + str, function*() {
+      var ast = yield readString(str);
+      var result = compile(ast);
+      assert(result === expected);
+    });
+  }
 
-  it("compiles numbers", function() {
-    var ast = 123;
-    var expected = "123";
-    assert(compile(ast) === expected);
-  });
-
-  it("compiles +", function() {
-    var ast = list("+", 1, 2, 3);
-    var expected = "(1 + 2 + 3)";
-    assert(compile(ast) === expected);
-  });
-
-  it("compiles -", function() {
-    var ast = list("-", 1, 2, 3);
-    var expected = "(1 - 2 - 3)";
-    assert(compile(ast) === expected);
-  });
-
-  it("compiles *", function() {
-    var ast = list("*", 1, 2, 3);
-    var expected = "(1 * 2 * 3)";
-    assert(compile(ast) === expected);
-  });
-
-  it("compiles /", function() {
-    var ast = list("/", 1, 2, 3);
-    var expected = "(1 / 2 / 3)";
-    assert(compile(ast) === expected);
-  });
-
-  it("compiles nested arithmetic", function() {
-    var ast = list("+", 1, list("-", 2, 3));
-    var expected = "(1 + (2 - 3))";
-    assert(compile(ast) === expected);
-  });
-
-  it("compiles fn with no args", function() {
-    var ast = list("fn", list(), "a");
-    var expected = '(function() { return _foxy.resolve("a"); })';
-    assert(compile(ast) === expected);
-  });
-
-  it("compiles fn with two args", function() {
-    var ast = list("fn", list("a", "b"), list("+", "a", "b"));
-    var expected = "(function(a, b) { return (a + b); })";
-    assert(compile(ast) === expected);
-  });
-
-  it("compiles anonymous fn calls", function() {
-    var ast = list(list("fn", list("a"), "a"), 0);
-    var expected = "(function(a) { return a; })(0)";
-    assert(compile(ast) === expected);
-  });
-
-  it("compiles quote of a symbol", function() {
-    var ast = list("quote", "a");
-    var expected = "\"a\"";
-    assert(compile(ast) === expected);
-  });
-
-  it("compiles quote of empty list", function() {
-    var ast = list("quote", list());
-    var expected = "mori.list()";
-    assert(compile(ast) === expected);
-  });
-
-  it("compiles quote of nested lists", function() {
-    var ast = list("quote", list("a", list("b", "c")));
-    var expected = 'mori.list("a", mori.list("b", "c"))';
-    assert(compile(ast) === expected);
-  });
-
-  it("compiles def", function() {
-    var ast = list("def", "a", 1);
-    var expected = '_foxy.define("a", 1);';
-    assert(compile(ast) === expected);
-  });
-
-  it("compiles backquote of a symbol", function() {
-    var ast = list("backquote", "a");
-    var expected = '"a"';
-    assert(compile(ast) === expected);
-  });
-
-  it("compiles backquote of empty list", function() {
-    var ast = list("backquote", list());
-    var expected = "mori.list()";
-    assert(compile(ast) === expected);
-  });
-
-  it("compiles backquote with nested unquote", function() {
-    var ast = list("backquote", list("a", list("unquote", "a")));
-    var expected = 'mori.list("a", _foxy.resolve("a"))';
-    assert(compile(ast) === expected);
-  });
-
-  it("compiles = with 2 args", function() {
-    var ast = list("=", 1, 2);
-    var expected = "(1 === 2)";
-    assert(compile(ast) === expected);
-  });
-
-  it("compiles not= with 2 args", function() {
-    var ast = list("not=", 1, 2);
-    var expected = "(1 !== 2)";
-    assert(compile(ast) === expected);
-  });
-
-  it("compiles < with 2 args", function() {
-    var ast = list("<", 1, 2);
-    var expected = "(1 < 2)";
-    assert(compile(ast) === expected);
-  });
-
-  it("compiles > with 2 args", function() {
-    var ast = list(">", 1, 2);
-    var expected = "(1 > 2)";
-    assert(compile(ast) === expected);
-  });
-
-  it("compiles <= with 2 args", function() {
-    var ast = list("<=", 1, 2);
-    var expected = "(1 <= 2)";
-    assert(compile(ast) === expected);
-  });
-
-  it("compiles >= with 2 args", function() {
-    var ast = list(">=", 1, 2);
-    var expected = "(1 >= 2)";
-    assert(compile(ast) === expected);
-  });
-
-  it("compiles not with 1 arg", function() {
-    var ast = list("not", 1);
-    var expected = "(!1)";
-    assert(compile(ast) === expected);
-  });
-
-  it("compiles and with 2 args", function() {
-    var ast = list("and", 1, 2);
-    var expected = "(1 && 2)";
-    assert(compile(ast) === expected);
-  });
-
-  it("compiles or with 2 args", function() {
-    var ast = list("or", 1, 2);
-    var expected = "(1 || 2)";
-    assert(compile(ast) === expected);
-  });
+  itCompiles("a", '_foxy.resolve("a")');
+  itCompiles("123", "123");
+  itCompiles("(+ 1 2 3)", "(1 + 2 + 3)");
+  itCompiles("(- 1 2 3)", "(1 - 2 - 3)");
+  itCompiles("(* 1 2 3)", "(1 * 2 * 3)");
+  itCompiles("(/ 1 2 3)", "(1 / 2 / 3)");
+  itCompiles("(+ 1 (- 2 3))", "(1 + (2 - 3))");
+  itCompiles("(fn () a)", '(function() { return _foxy.resolve("a"); })');
+  itCompiles("(fn (a b) (+ a b))", "(function(a, b) { return (a + b); })");
+  itCompiles("((fn (a) a) 0)", "(function(a) { return a; })(0)");
+  itCompiles("'a", '"a"');
+  itCompiles("'()", "mori.list()");
+  itCompiles("'(a (b c))", 'mori.list("a", mori.list("b", "c"))');
+  itCompiles("(def a 1)", '_foxy.define("a", 1);');
+  itCompiles("`a", '"a"');
+  itCompiles("`()", "mori.list()");
+  itCompiles("`(a ~a)", 'mori.list("a", _foxy.resolve("a"))');
+  itCompiles("(= 1 2)", "(1 === 2)");
+  itCompiles("(not= 1 2)", "(1 !== 2)");
+  itCompiles("(< 1 2)", "(1 < 2)");
+  itCompiles("(> 1 2)", "(1 > 2)");
+  itCompiles("(<= 1 2)", "(1 <= 2)");
+  itCompiles("(>= 1 2)", "(1 >= 2)");
+  itCompiles("(not 1)", "(!1)");
+  itCompiles("(and 1 2)", "(1 && 2)");
+  itCompiles("(or 1 2)", "(1 || 2)");
 });
