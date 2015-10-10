@@ -2,5 +2,6 @@
  "version": "0.0.0",
  "dependencies": {"co": "4.6.0",
                   "mori": "0.3.2"},
- "devDependencies": {"mocha": "2.3.3"},
+ "devDependencies": {"mocha": "2.3.3",
+                     "better-assert": "1.0.2"},
  "scripts": {"test": "mocha"}}

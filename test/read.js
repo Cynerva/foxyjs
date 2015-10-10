@@ -1,4 +1,4 @@
-var assert = require("assert");
+var assert = require("better-assert");
 var mocha = require("mocha");
 var mori = require("mori");
 var helper = require("./helper");
@@ -7,6 +7,8 @@ var makeChannel = require("../src/channel");
 var describe = mocha.describe;
 var beforeEach = mocha.beforeEach;
 var it = helper.it;
+var list = mori.list;
+var equals = mori.equals;
 
 var readChannel = require("../src/read").readChannel;
 
@@ -41,31 +43,31 @@ describe("readChannel", function() {
   it("reads an empty list", function*() {
     yield input.put("()");
     var result = yield output.take();
-    assert(mori.equals(result, mori.list()));
+    assert(equals(result, list()));
   });
 
   it("reads a list of two symbols", function*() {
     yield input.put("(a b)");
     var result = yield output.take();
-    assert(mori.equals(result, mori.list("a", "b")));
+    assert(equals(result, list("a", "b")));
   });
 
   it("reads quotes", function*() {
     yield input.put("'a");
     var result = yield output.take();
-    assert(mori.equals(result, mori.list("quote", "a")));
+    assert(equals(result, list("quote", "a")));
   });
 
   it("reads backquotes", function*() {
     yield input.put("`a");
     var result = yield output.take();
-    assert(mori.equals(result, mori.list("backquote", "a")));
+    assert(equals(result, list("backquote", "a")));
   });
 
   it("reads unquotes", function*() {
     yield input.put("~a");
     var result = yield output.take();
-    assert(mori.equals(result, mori.list("unquote", "a")));
+    assert(equals(result, list("unquote", "a")));
   });
 
   it("consumes closing parens properly", function*() {
