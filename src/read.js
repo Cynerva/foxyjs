@@ -24,6 +24,20 @@ function readExpression(tokenChannel) {
       return mori.list.apply(null, elements);
     }
 
+    if (token === "[") {
+      var elements = [];
+      token = yield tokenChannel.peek();
+
+      while (token !== "]") {
+        var expr = yield readExpression(tokenChannel);
+        elements.push(expr);
+        token = yield tokenChannel.peek();
+      }
+
+      yield tokenChannel.take();
+      return mori.vector.apply(null, elements);
+    }
+
     if (token === "'") {
       return mori.list("quote", yield readExpression(tokenChannel));
     }
@@ -41,7 +55,7 @@ function readExpression(tokenChannel) {
 }
 
 function tokenize(str) {
-  return str.replace(/([\(\)'`~])/g, " $1 ")
+  return str.replace(/([\(\)\[\]'`~])/g, " $1 ")
     .trim()
     .split(/\s+/);
 }

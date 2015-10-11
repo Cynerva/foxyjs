@@ -9,6 +9,7 @@ var beforeEach = mocha.beforeEach;
 var it = helper.it;
 var list = mori.list;
 var equals = mori.equals;
+var vector = mori.vector;
 
 var readChannel = require("../src/read").readChannel;
 
@@ -75,5 +76,17 @@ describe("readChannel", function() {
     output.take();
     var result = yield output.take();
     assert(result === "a");
+  });
+
+  it("reads an empty vector", function*() {
+    yield input.put("[]");
+    var result = yield output.take();
+    assert(equals(result, vector()));
+  });
+
+  it("reads a vector with two symbols", function*() {
+    yield input.put("[a b]");
+    var result = yield output.take();
+    assert(equals(result, vector("a", "b")));
   });
 });
