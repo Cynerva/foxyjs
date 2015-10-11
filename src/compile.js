@@ -34,9 +34,16 @@ function compileList(scope, ast) {
   }
 }
 
+function compileVector(scope, ast) {
+  var args = compileArgs(scope, ast);
+  return "mori.vector(" + join(args, ", ") + ")";
+}
+
 function compile(scope, ast) {
   if (mori.isSeq(ast)) {
     return compileList(scope, ast);
+  } else if (mori.isVector(ast)) {
+    return compileVector(scope, ast);
   } else {
     return compileAtom(scope, ast);
   }
@@ -103,6 +110,9 @@ function quoteExpr(expr) {
   } else if (mori.isSeq(expr)) {
     var childArgs = mori.map(quoteExpr, expr);
     return "mori.list(" + join(childArgs, ", ") + ")";
+  } else if (mori.isVector(expr)) {
+    var childArgs = mori.map(quoteExpr, expr);
+    return "mori.vector(" + join(childArgs, ", ") + ")";
   }
 }
 
@@ -119,6 +129,9 @@ function backquoteExpr(scope, expr) {
       var childArgs = mori.map(backquoteExpr.bind(null, scope), expr);
       return "mori.list(" + join(childArgs, ", ") + ")";
     }
+  } else if (mori.isVector(expr)) {
+    var childArgs = mori.map(backquoteExpr.bind(null, scope), expr);
+    return "mori.vector(" + join(childArgs, ", ") + ")";
   } else {
     return quoteExpr(expr);
   }

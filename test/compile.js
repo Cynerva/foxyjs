@@ -44,4 +44,10 @@ describe("compile", function() {
   itCompiles("(not 1)", "(!1)");
   itCompiles("(and 1 2)", "(1 && 2)");
   itCompiles("(or 1 2)", "(1 || 2)");
+  itCompiles("[]", "mori.vector()");
+  itCompiles("[a b]", 'mori.vector(_foxy.resolve("a"), _foxy.resolve("b"))');
+  itCompiles("'[]", "mori.vector()");
+  itCompiles("'[a b]", 'mori.vector("a", "b")');
+  itCompiles("`[]", "mori.vector()");
+  itCompiles("`[a ~a]", 'mori.vector("a", _foxy.resolve("a"))');
 });
