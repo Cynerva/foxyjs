@@ -7,6 +7,8 @@ var makeChannel = require("../src/channel");
 var describe = mocha.describe;
 var beforeEach = mocha.beforeEach;
 var it = helper.it;
+var isList = mori.isList;
+var isVector = mori.isVector;
 var list = mori.list;
 var equals = mori.equals;
 var vector = mori.vector;
@@ -44,12 +46,14 @@ describe("readChannel", function() {
   it("reads an empty list", function*() {
     yield input.put("()");
     var result = yield output.take();
+    assert(isList(result));
     assert(equals(result, list()));
   });
 
   it("reads a list of two symbols", function*() {
     yield input.put("(a b)");
     var result = yield output.take();
+    assert(isList(result));
     assert(equals(result, list("a", "b")));
   });
 
@@ -81,12 +85,14 @@ describe("readChannel", function() {
   it("reads an empty vector", function*() {
     yield input.put("[]");
     var result = yield output.take();
+    assert(isVector(result));
     assert(equals(result, vector()));
   });
 
   it("reads a vector with two symbols", function*() {
     yield input.put("[a b]");
     var result = yield output.take();
+    assert(isVector(result));
     assert(equals(result, vector("a", "b")));
   });
 });

@@ -6,36 +6,33 @@ function readAtom(str) {
   return isNaN(str) ? str : +str;
 }
 
+function readElementsUntilToken(tokenChannel, endToken) {
+  return co(function*() {
+    var elements = mori.vector();
+    token = yield tokenChannel.peek();
+
+    while (token !== endToken) {
+      var expr = yield readExpression(tokenChannel);
+      elements = mori.conj(elements, expr);
+      token = yield tokenChannel.peek();
+    }
+
+    yield tokenChannel.take();
+    return elements;
+  });
+}
+
 function readExpression(tokenChannel) {
   return co(function*() {
     var token = yield tokenChannel.take();
 
     if (token === "(") {
-      var elements = [];
-      token = yield tokenChannel.peek();
-
-      while (token !== ")") {
-        var expr = yield readExpression(tokenChannel);
-        elements.push(expr);
-        token = yield tokenChannel.peek();
-      }
-
-      yield tokenChannel.take();
-      return mori.list.apply(null, elements);
+      var elements = yield readElementsUntilToken(tokenChannel, ")");
+      return mori.list.apply(null, mori.intoArray(elements));
     }
 
     if (token === "[") {
-      var elements = [];
-      token = yield tokenChannel.peek();
-
-      while (token !== "]") {
-        var expr = yield readExpression(tokenChannel);
-        elements.push(expr);
-        token = yield tokenChannel.peek();
-      }
-
-      yield tokenChannel.take();
-      return mori.vector.apply(null, elements);
+      return yield readElementsUntilToken(tokenChannel, "]");
     }
 
     if (token === "'") {
